@@ -6,7 +6,7 @@
 /*   By: fnancy <fnancy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/24 14:34:41 by fnancy            #+#    #+#             */
-/*   Updated: 2021/04/24 14:47:40 by fnancy           ###   ########.fr       */
+/*   Updated: 2021/05/03 14:36:31 by fnancy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,19 +17,19 @@ int	print_sections_symbols(t_symbol symbol, size_t len)
 	if (symbol.type == N_ABS || symbol.type == N_SECT || symbol.type == N_INDR)
 		print_unsigned(symbol.value, 16, len);
 	if (symbol.type == N_ABS)
-		write(1, symbol.ext ? " A " : " a ", 3);
+		print_symbol_type(symbol, 'a');
 	else if (symbol.type == N_INDR)
-		write(1, symbol.ext ? " I " : " i ", 3);
+		print_symbol_type(symbol, 'i');
 	else if (symbol.type == N_SECT)
 	{
 		if (symbol.sect == sections()->bss)
-			write(1, symbol.ext ? " B " : " b ", 3);
+			print_symbol_type(symbol, 'b');
 		else if (symbol.sect == sections()->data)
-			write(1, symbol.ext ? " D " : " d ", 3);
+			print_symbol_type(symbol, 'd');
 		else if (symbol.sect == sections()->text)
-			write(1, symbol.ext ? " T " : " t ", 3);
+			print_symbol_type(symbol, 't');
 		else
-			write(1, symbol.ext ? " S " : " s ", 3);
+			print_symbol_type(symbol, 's');
 	}
 	else
 		return (EXIT_FAILURE);
@@ -43,7 +43,7 @@ void	print_symbols(t_symbol symbol, size_t len)
 	if ((symbol.type == N_UNDF) && symbol.ext)
 		write(1, "                ", len);
 	if (symbol.type == N_UNDF && symbol.ext)
-		write(1, symbol.ext ? " U " : " U ", 3);
+		print_symbol_type(symbol, 'u');
 	else if (print_sections_symbols(symbol, len) == EXIT_FAILURE)
 		return ;
 	write(1, symbol.name, ft_strlen(symbol.name));
@@ -59,4 +59,20 @@ void	print_unsigned(size_t addr, size_t base, size_t len)
 	print_unsigned(addr / base, base, len - 1);
 	value = HEX_STRING[(addr % base)];
 	write(1, &value, 1);
+}
+
+void	print_file_name(char *filename)
+{
+	write(1, "\n", 1);
+	write(1, filename, ft_strlen(filename));
+	write(1, ":\n", 2);
+}
+
+void	print_arch_file_name(char *filename, char *symbol)
+{
+	write(1, "\n", 1);
+	write(1, filename, ft_strlen(filename));
+	write(1, "(", 1);
+	write(1, symbol, ft_strlen(symbol));
+	write(1, "):\n", 3);
 }

@@ -6,7 +6,7 @@
 /*   By: fnancy <fnancy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/18 12:48:33 by fnancy            #+#    #+#             */
-/*   Updated: 2021/04/24 14:39:52 by fnancy           ###   ########.fr       */
+/*   Updated: 2021/05/03 14:58:57 by fnancy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,9 @@
 # include <mach-o/fat.h>
 # include <mach-o/loader.h>
 # include <mach-o/nlist.h>
+# include <ar.h>
+
+# include <errno.h>
 
 # include <fcntl.h>
 # include <unistd.h>
@@ -27,6 +30,16 @@
 
 # define HEX_STRING "0123456789abcdef"
 # define SYMBOL_SIZE 512
+
+# define AR_MAGIC 0x72613c21
+# define AR_CIGAM 0x213c6172
+
+# define INV_OBJ "The file was not recognized as a valid object file\n"
+
+# define PPC_STRING " (for architecture ppc):\n"
+# define PPC64_STRING " (for architecture ppc64):\n"
+# define I386_STRING " (for architecture i386):\n"
+# define X86_64_STRING " (for architecture x86_64):\n"
 
 typedef struct s_symbol
 {
@@ -45,6 +58,13 @@ typedef struct s_section
 	uint32_t	bss;
 }				t_section;
 
+int				handle_macho32(void *ptr, char *filename);
+int				handle_macho64(void *ptr, char *filename);
+int				handle_arch(void *ptr, char *filename, off_t s);
+int				handle_fat32(void *ptr, char *filename, off_t size);
+int				handle_fat64(void *ptr, char *filename, off_t size);
+
+int				ft_nm(void *ptr, char *filename, off_t size, uint8_t many);
 int				ft_error(char *filename, char *msg, int errnum);
 t_section		*sections(void);
 void			reset_sections(void);
@@ -61,5 +81,8 @@ uint64_t		swap_uint64(uint64_t n);
 int				print_sections_symbols(t_symbol symbol, size_t len);
 void			print_symbols(t_symbol symbol, size_t len);
 void			print_unsigned(size_t addr, size_t base, size_t len);
+void			print_file_name(char *filename);
+void			print_arch_file_name(char *filename, char *symbol);
+void			print_symbol_type(t_symbol symbol, char ch);
 
 #endif

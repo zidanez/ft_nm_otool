@@ -6,7 +6,7 @@
 #    By: fnancy <fnancy@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/18 12:54:32 by fnancy            #+#    #+#              #
-#    Updated: 2021/04/24 14:35:23 by fnancy           ###   ########.fr        #
+#    Updated: 2021/05/03 15:23:48 by fnancy           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,16 +37,17 @@ SRC_PATH = $(WS_PATH)/src/
 OBJ_PATH = $(WS_PATH)/objs/
 INC_PATH = $(WS_PATH)/include/
 LIB_PATH = $(WS_PATH)/Libft/
-LIB_INC_PATH = $(LIB_PATH)includes/
+LIB_INC_PATH = $(LIB_PATH)include/
 
 SRC = $(addprefix $(SRC_PATH), $(SRC_FILES))
 OBJ = $(addprefix $(OBJ_PATH), $(OBJ_FILES))
 INC = $(addprefix -I, $(INC_PATH))
 INC_LIB = $(addprefix -I, $(LIB_INC_PATH))
 
-SRC_FILES = nm/main.c nm/utils.c nm/macho64.c nm/section.c nm/ppc.c nm/printer.c
+SRC_FILES = nm/main.c nm/utils.c nm/types/macho64/macho64.c nm/types/macho32/macho32.c nm/types/arch/arch.c nm/types/fat32/fat32.c \
+nm/types/fat64/fat64.c nm/section.c nm/ppc.c nm/printer.c nm/printer_helper.c
 
-ADD_OBJ = $(addprefix $(OBJ_PATH), nm otool)
+ADD_OBJ = $(addprefix $(OBJ_PATH), nm otool nm/types/macho64 nm/types/macho32 nm/types/arch nm/types/fat32 nm/types/fat64)
 
 
 OBJ_FILES = $(SRC_FILES:.c=.o)
