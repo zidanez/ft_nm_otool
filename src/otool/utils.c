@@ -6,11 +6,11 @@
 /*   By: fnancy <fnancy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/18 12:52:14 by fnancy            #+#    #+#             */
-/*   Updated: 2021/05/03 19:22:10 by fnancy           ###   ########.fr       */
+/*   Updated: 2021/05/03 18:30:55 by fnancy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_nm.h"
+#include "ft_otool.h"
 
 int	ft_error(char *filename, char *msg, int errnum)
 {
@@ -20,33 +20,6 @@ int	ft_error(char *filename, char *msg, int errnum)
 	write(2, msg, ft_strlen(msg));
 	write(2, "\n", 1);
 	return (errnum);
-}
-
-t_symbol	*sort_symbols(t_symbol *symbols, uint32_t size)
-{
-	int			ret;
-	uint32_t	i;
-	uint32_t	j;
-	t_symbol	tmp;
-
-	i = 0;
-	while (i < size - 1)
-	{
-		j = i + 1;
-		while (j < size)
-		{
-			ret = ft_strcmp(symbols[i].name, symbols[j].name);
-			if (ret > 0 || (ret == 0 && symbols[i].value > symbols[j].value))
-			{
-				tmp = symbols[i];
-				symbols[i] = symbols[j];
-				symbols[j] = tmp;
-			}
-			++j;
-		}
-		++i;
-	}
-	return (symbols);
 }
 
 uint32_t	swap_uint32(uint32_t n)

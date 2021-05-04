@@ -1,31 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strncpy.c                                       :+:      :+:    :+:   */
+/*   section.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fnancy <fnancy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/04/05 12:19:25 by fnancy            #+#    #+#             */
-/*   Updated: 2021/05/03 19:25:52 by fnancy           ###   ########.fr       */
+/*   Created: 2021/04/24 13:45:29 by fnancy            #+#    #+#             */
+/*   Updated: 2021/05/03 18:30:50 by fnancy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "ft_otool.h"
 
-char	*ft_strncpy(char *dst, const char *src, size_t len)
+t_section	*sections(void)
 {
-	char	*ptrdst;
+	static t_section	sections = {0, 0, 0, 0};
 
-	ptrdst = dst;
-	while (*src && len)
-	{
-		*(ptrdst++) = *(src++);
-		len--;
-	}
-	while (len)
-	{
-		*(ptrdst++) = 0;
-		len--;
-	}
-	return (dst);
+	return (&sections);
+}
+
+void	reset_sections(void)
+{
+	sections()->index = 0;
+	sections()->text = 0;
+	sections()->data = 0;
+	sections()->bss = 0;
 }

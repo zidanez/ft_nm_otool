@@ -6,11 +6,11 @@
 #    By: fnancy <fnancy@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/18 12:54:32 by fnancy            #+#    #+#              #
-#    Updated: 2021/05/03 15:23:48 by fnancy           ###   ########.fr        #
+#    Updated: 2021/05/04 14:19:52 by fnancy           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-.PHONY: all, $(NAME), clean, fclean, re, make_lft
+.PHONY: all, $(OTOOL), $(NM), clean, fclean, re, make_lft
 
 # ************************************************************************** #
 #                           colors                                           #
@@ -29,55 +29,82 @@ ESCN = \033[0m
 # ************************************************************************** #
 #                           Configuration                                    #
 # ************************************************************************** #
-NAME = ft_nm
+NM = ft_nm
+OTOOL = ft_otool
 FLAGS = -Wall -Wextra
 
 WS_PATH = $(shell pwd)
-SRC_PATH = $(WS_PATH)/src/
-OBJ_PATH = $(WS_PATH)/objs/
-INC_PATH = $(WS_PATH)/include/
+
+SRC_PATH_NM = $(WS_PATH)/src/nm/
+SRC_PATH_OTOOL = $(WS_PATH)/src/otool/
+
+OBJ_PATH_NM = $(WS_PATH)/objs/nm/
+OBJ_PATH_OTOOL = $(WS_PATH)/objs/otool/
+
+INC_PATH_NM = $(WS_PATH)/include/nm
+INC_PATH_OTOOL = $(WS_PATH)/include/otool
+
 LIB_PATH = $(WS_PATH)/Libft/
 LIB_INC_PATH = $(LIB_PATH)include/
 
-SRC = $(addprefix $(SRC_PATH), $(SRC_FILES))
-OBJ = $(addprefix $(OBJ_PATH), $(OBJ_FILES))
-INC = $(addprefix -I, $(INC_PATH))
+SRC_OTOOL = $(addprefix $(SRC_PATH_OTOOL), $(SRC_FILES_OTOOL))
+SRC_NM = $(addprefix $(SRC_PATH_NM), $(SRC_FILES_NM))
+
+
+
+INC_NM = $(addprefix -I, $(INC_PATH_NM))
+INC_OTOOL = $(addprefix -I, $(INC_PATH_OTOOL))
 INC_LIB = $(addprefix -I, $(LIB_INC_PATH))
 
-SRC_FILES = nm/main.c nm/utils.c nm/types/macho64/macho64.c nm/types/macho32/macho32.c nm/types/arch/arch.c nm/types/fat32/fat32.c \
-nm/types/fat64/fat64.c nm/section.c nm/ppc.c nm/printer.c nm/printer_helper.c
+SRC_FILES_NM = types/macho64/macho64.c types/macho32/macho32.c types/arch/arch.c types/fat32/fat32.c \
+types/fat64/fat64.c section.c ppc.c printer.c printer_helper.c main.c utils.c 
+SRC_FILES_OTOOL =  types/macho64/macho64.c types/macho32/macho32.c types/arch/arch.c types/fat32/fat32.c \
+types/fat64/fat64.c section.c ppc.c printer.c main.c utils.c
 
-ADD_OBJ = $(addprefix $(OBJ_PATH), nm otool nm/types/macho64 nm/types/macho32 nm/types/arch nm/types/fat32 nm/types/fat64)
+ADD_OBJ_NM = $(addprefix $(OBJ_PATH_NM), types/macho64 types/macho32 types/arch types/fat32 types/fat64)
+ADD_OBJ_OTOOL = $(addprefix $(OBJ_PATH_OTOOL), types/macho64 types/macho32 types/arch types/fat32 types/fat64)
 
 
-OBJ_FILES = $(SRC_FILES:.c=.o)
+OBJ_NM = $(addprefix $(OBJ_PATH_NM), $(SRC_FILES_NM:.c=.o))
+OBJ_OTOOL = $(addprefix $(OBJ_PATH_OTOOL), $(SRC_FILES_OTOOL:.c=.o))
+
 
 # ************************************************************************** #
 #                                   Rules                                    #
 # ************************************************************************** #
 
-all: $(NAME)
+all: make_lft $(NM) $(OTOOL)
 
-$(NAME): $(OBJ)
-	@make make_lft
-	@gcc $(FLAGS) -o $(NAME) $(INC) $(INC_LIB) $(OBJ) -L $(LIB_PATH) -lft -lncurses -g
+$(NM): $(OBJ_NM)
+	@gcc $(FLAGS) -o $(NM) $(INC_NM) $(INC_LIB) $(OBJ_NM) -L $(LIB_PATH) -lft -lncurses -g
 
-$(OBJ_PATH)%.o: $(SRC_PATH)%.c
+$(OTOOL): $(OBJ_OTOOL)
+	@gcc $(FLAGS) -o $(OTOOL) $(INC_OTOOL) $(INC_LIB) $(OBJ_OTOOL) -L $(LIB_PATH) -lft -lncurses -g
+
+$(OBJ_PATH_NM)%.o: $(SRC_PATH_NM)%.c $(INC_PATH_NM)
 	@echo "$(GREY)$(UNDERLINE)CREATING >> $@$(ESCN)"
-	@mkdir -p $(OBJ_PATH)
-	@mkdir -p $(ADD_OBJ)
-	@gcc $(INC) $(INC_LIB) -o $@ -c $<
+	@mkdir -p $(OBJ_PATH_NM)
+	@mkdir -p $(ADD_OBJ_NM)
+	@gcc $(INC_NM) $(INC_LIB) -o $@ -c $<
+
+$(OBJ_PATH_OTOOL)%.o: $(SRC_PATH_OTOOL)%.c $(INC_PATH_OTOOL)
+	@echo "$(AQUA)$(UNDERLINE)CREATING >> $@$(ESCN)"
+	@mkdir -p $(OBJ_PATH_OTOOL)
+	@mkdir -p $(ADD_OBJ_OTOOL)
+	@gcc $(INC_OTOOL) $(INC_LIB) -o $@ -c $<
 
 make_lft:
 	@echo "$(GREEN)$(UNDERLINE)COMPILING LIBFT$(ESCN)"
 	@make -C $(LIB_PATH)
 
 clean:
-	@rm -rf $(OBJ_PATH)
+	@rm -rf $(OBJ_PATH_NM)
+	@rm -rf $(OBJ_PATH_OTOOL)
 	@make clean -C $(LIB_PATH)
 
 fclean: clean
-	@rm -f $(NAME)
+	@rm -f $(NM)
+	@rm -f $(OTOOL)
 	@make fclean -C $(LIB_PATH)
 
 re: fclean all
